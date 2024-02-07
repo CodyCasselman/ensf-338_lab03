@@ -17,89 +17,62 @@ def bubble_sort(arr):
 def quick_sort(arr):
     start_time = timeit.default_timer()
 
-    if len(arr) <= 1:
-        return arr
+    def _quick_sort(arr):
+        if len(arr) <= 1:
+            return arr
 
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
+        pivot = arr[len(arr) // 2]
+        left = [x for x in arr if x < pivot]
+        middle = [x for x in arr if x == pivot]
+        right = [x for x in arr if x > pivot]
 
+        return _quick_sort(left) + middle + _quick_sort(right)
+
+    _quick_sort(arr)
     elapsed_time = timeit.default_timer() - start_time
+
     return elapsed_time
 
-def generate_arrays(length): #Function to make random, sorted, and reverse arrays
+def generate_arrays(length):
+    # Generate a random array
     random_array = [random.randint(1, 100) for _ in range(length)]
+
+    # Sort the random array to create a sorted array
     sorted_array = sorted(random_array)
+
+    # Reverse the sorted array to create a reversed array
     reversed_array = sorted_array[::-1]
+
     return random_array, sorted_array, reversed_array
 
-def measure_times(sort_function, array, num_measurements): #Measures times for specified sorting and saves in a list
-    times = [sort_function(array.copy()) for _ in range(num_measurements)]
-    return times
 
-random_array, sorted_array, reversed_array = generate_arrays(20) #Length = 20
+# Vary the number of elements from 10 to 210, in increments of 10 for 20 tests
+element_counts = list(range(10, 210, 10))
 
-num_measurements = 20
+# Measure execution times for bubble sort
+avg_bubble = [bubble_sort(generate_arrays(n)[0].copy()) for n in element_counts] #Random input
+best_bubble = [bubble_sort(generate_arrays(n)[1].copy()) for n in element_counts] #Sorted input
+worst_bubble = [bubble_sort(generate_arrays(n)[2].copy()) for n in element_counts] #Reverse input
 
-# Measure times for Bubble Sort
-worst_bubble = measure_times(bubble_sort, reversed_array, num_measurements)
-avg_bubble = measure_times(bubble_sort, random_array, num_measurements)
-best_bubble = measure_times(bubble_sort, sorted_array, num_measurements)
+# Measure execution times for quick sort
+avg_quick = [quick_sort(generate_arrays(n)[0].copy()) for n in element_counts] #Random input
+#best_quick = [quick_sort(generate_arrays(n)[3].copy()) for n in element_counts] #Sorted input
+#worst_quick = [quick_sort(generate_arrays(n)[4].copy()) for n in element_counts] #Reverse input
 
-# Measure times for Quick Sort
-worst_quick = measure_times(quick_sort, reversed_array, num_measurements)
-avg_quick = measure_times(quick_sort, random_array, num_measurements)
-best_quick = measure_times(quick_sort, sorted_array, num_measurements)
+# Plots
+def plot_results(title, worst_case, avg_case, best_case, algorithm):
+    plt.figure(figsize=(8, 5))
+    plt.plot(element_counts, worst_case, label='Worst-case')
+    plt.plot(element_counts, avg_case, label='Average-case')
+    plt.plot(element_counts, best_case, label='Best-case')
+    plt.title(title)
+    plt.xlabel('Number of Elements')
+    plt.ylabel('Execution Time (seconds)')
+    plt.legend()
+    plt.show()
 
-# Plotting individual plots
-plt.figure(figsize=(10, 12))
+# Plot for Bubble Sort
+plot_results("Bubble Sort", worst_bubble, avg_bubble, best_bubble, "Bubble Sort")
 
-# Bubble Sort Plots
-plt.subplot(3, 2, 1)
-plt.plot(range(num_measurements), worst_bubble, label='Worst Bubble Sort')
-plt.title('Worst Case - Bubble Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-plt.subplot(3, 2, 2)
-plt.plot(range(num_measurements), avg_bubble, label='Average Bubble Sort')
-plt.title('Average Case - Bubble Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-plt.subplot(3, 2, 3)
-plt.plot(range(num_measurements), best_bubble, label='Best Bubble Sort')
-plt.title('Best Case - Bubble Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-# Quick Sort Plots
-plt.subplot(3, 2, 4)
-plt.plot(range(num_measurements), worst_quick, label='Worst Quick Sort')
-plt.title('Worst Case - Quick Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-plt.subplot(3, 2, 5)
-plt.plot(range(num_measurements), avg_quick, label='Average Quick Sort')
-plt.title('Average Case - Quick Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-plt.subplot(3, 2, 6)
-plt.plot(range(num_measurements), best_quick, label='Best Quick Sort')
-plt.title('Best Case - Quick Sort')
-plt.xlabel('Measurement')
-plt.ylabel('Time (seconds)')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
-
-
+# Plot for Quick Sort
+#plot_results("Quick Sort", worst_quick, avg_quick, best_quick, "Quick Sort")
