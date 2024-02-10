@@ -1,4 +1,5 @@
 import random
+import time
 import timeit
 import matplotlib.pyplot as plt
 
@@ -17,36 +18,37 @@ def bubble_sort(arr):
 def quick_sort(arr):
     start_time = timeit.default_timer()
 
-    def _quick_sort(arr):
-        if len(arr) <= 1:
-            return arr
+    if len(arr) <= 1:
+        end_time = timeit.default_timer()
+        return end_time - start_time
+    else:
+        pivot = arr[0]
+        less = [x for x in arr[1:] if x <= pivot]
+        greater = [x for x in arr[1:] if x > pivot]
+        time_less = quick_sort(less)
+        time_greater = quick_sort(greater)
+        end_time = timeit.default_timer()
+        return end_time - start_time
 
-        pivot = arr[len(arr) // 2]
-        left = [x for x in arr if x < pivot]
-        middle = [x for x in arr if x == pivot]
-        right = [x for x in arr if x > pivot]
-
-        return _quick_sort(left) + middle + _quick_sort(right)
-
-    _quick_sort(arr)
-    elapsed_time = timeit.default_timer() - start_time
-
-    return elapsed_time
 
 def generate_arrays(length):
-    # Generate a random array
-    random_array = [random.randint(1, 100) for _ in range(length)]
+    random_array = [random.randint(1, 100) for _ in range(length)] #random array
 
-    # Sort the random array to create a sorted array
-    sorted_array = sorted(random_array)
+    sorted_array = sorted(random_array) #sort array
 
-    # Reverse the sorted array to create a reversed array
-    reversed_array = sorted_array[::-1]
+    reversed_array = sorted_array[::-1] #reverse array
 
-    return random_array, sorted_array, reversed_array
+    best_case_quick = random_array.copy() #best case array for quick
+    temp = best_case_quick[0]
+    best_case_quick[0] = best_case_quick[len(best_case_quick) // 2]
+    best_case_quick[len(best_case_quick) // 2] = temp
 
 
-# Vary the number of elements from 10 to 210, in increments of 10 for 20 tests
+
+    return random_array, sorted_array, reversed_array, best_case_quick
+
+
+# 20 tests from from 10 to 210 in increments of 10
 element_counts = list(range(10, 210, 10))
 
 # Measure execution times for bubble sort
@@ -55,24 +57,22 @@ best_bubble = [bubble_sort(generate_arrays(n)[1].copy()) for n in element_counts
 worst_bubble = [bubble_sort(generate_arrays(n)[2].copy()) for n in element_counts] #Reverse input
 
 # Measure execution times for quick sort
-avg_quick = [quick_sort(generate_arrays(n)[0].copy()) for n in element_counts] #Random input
-#best_quick = [quick_sort(generate_arrays(n)[3].copy()) for n in element_counts] #Sorted input
-#worst_quick = [quick_sort(generate_arrays(n)[4].copy()) for n in element_counts] #Reverse input
+avg_quick = [quick_sort(generate_arrays(n)[0].copy()) for n in element_counts]  # Random input
+best_quick = [quick_sort(generate_arrays(n)[3].copy()) for n in element_counts]  # Best case (Pivot is median)
+worst_quick = [quick_sort(generate_arrays(n)[1].copy()) for n in element_counts]  # Sorted input
 
-# Plots
+
 def plot_results(title, worst_case, avg_case, best_case, algorithm):
     plt.figure(figsize=(8, 5))
     plt.plot(element_counts, worst_case, label='Worst-case')
     plt.plot(element_counts, avg_case, label='Average-case')
     plt.plot(element_counts, best_case, label='Best-case')
-    plt.title(title)
+    plt.title(f"{title}")
     plt.xlabel('Number of Elements')
     plt.ylabel('Execution Time (seconds)')
     plt.legend()
     plt.show()
 
-# Plot for Bubble Sort
 plot_results("Bubble Sort", worst_bubble, avg_bubble, best_bubble, "Bubble Sort")
 
-# Plot for Quick Sort
-#plot_results("Quick Sort", worst_quick, avg_quick, best_quick, "Quick Sort")
+plot_results("Quick Sort", worst_quick, avg_quick, best_quick, "Quick Sort")
