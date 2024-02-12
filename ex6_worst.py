@@ -68,6 +68,3 @@ for entry in input_sizes:
     plt.title(f"Performance of Linear Search vs. Binary Search after Sorting {entry} Entries")
     plt.legend()
     plt.show()
-
-#The linear search appears to be faster according to the plots of the values, as the linear search consistently stays at
-#a linear complexity near the bottom of the times, while quick + binary increases more and more with more elements.

@@ -48,12 +48,14 @@ for entry in js2:
 
     results.append((entry, best_midpoint, best_time))
 
-# Unpack results into separate lists for plotting
 entries, midpoints, times = zip(*results)
 
-# Scatterplot
 plt.scatter(times, midpoints, c='orange')
 plt.title('Time vs Chosen Midpoint')
 plt.xlabel('Time taken (seconds)')
 plt.ylabel('Chosen Midpoint')
 plt.show()
+
+#The chosen midpoint does not seem to affect the time taken to sort the data, as the plot shows a concentration at ~0.0025s
+# but the midpoints chosen for that concentration varies dramatically, showing that the midpoint doesn't seem to affect this large
+# of a data sample.

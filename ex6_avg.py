@@ -69,4 +69,5 @@ for entry in input_sizes:
     plt.show()
 
 #The linear search appears to be faster according to the plots of the values, as the linear search consistently stays at
-#a linear complexity near the bottom of the times, while quick + binary increases more and more with more elements.
+#a linear complexity near the bottom of the times, while quick + binary increases more and more with more elements, due to
+# having to compute sorting before the search which adds to its complexity.
